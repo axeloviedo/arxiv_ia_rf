@@ -6,7 +6,7 @@ import pandas as pd
 app = Flask(__name__, template_folder='templates')
 
 # Cargar el modelo entrenado
-model = joblib.load('src/modelo_random_forest.pkl')
+model = joblib.load('modelo_random_forest.pkl')
 
 @app.route('/')
 def home():
