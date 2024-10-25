@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arxiv IA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>ARXIV</h1><br>
+        <nav>
+            <ul>
+                <li><a href="#!" onclick="showSection('prediccion')">Predicción</a></li>
+                <li><a href="#!" onclick="showSection('info_random_forest')">Random Forest</a></li>
+                <li><a href="#!" onclick="showSection('info_modelo')">Modelo Utilizado</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="content">
+        <!-- Sección de Predicción -->
+        <section id="prediccion" class="section active">
+            <h2 align=center>Ingrese los datos del estudiante</h2>
+            <form action="/predict" method="POST" class="styled-form">
+                <div class="input-group">
+                    <label for="edad">Edad:</label>
+                    <input type="number" id="edad" name="edad" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="sexo">Sexo:</label>
+                    <select id="sexo" name="sexo" required>
+                        <option value="0">Masculino</option>
+                        <option value="1">Femenino</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="est_civil">Estado Civil:</label>
+                    <select id="est_civil" name="est_civil" required>
+                        <option value="0">Soltero</option>
+                        <option value="1">Casado</option>
+                        <option value="2">Conviviente</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="hijos">Hijos:</label>
+                    <select id="hijos" name="hijos" required>
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="trabaja_estudia">Trabaja y Estudia:</label>
+                    <select id="trabaja_estudia" name="trabaja_estudia" required>
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="vive_solo">Vive Solo:</label>
+                    <select id="vive_solo" name="vive_solo" required>
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="nivel_socio_econ">Nivel Socioeconómico:</label>
+                    <select id="nivel_socio_econ" name="nivel_socio_econ" required>
+                        <option value="0">C</option>
+                        <option value="1">B</option>
+                        <option value="2">A</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="semestre">Semestre (1 a 12):</label>
+                    <input type="number" id="semestre" name="semestre" min="1" max="12" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="pp_anterior">Promedio Ponderado Anterior:</label>
+                    <input type="number" step="any" id="pp_anterior" name="pp_anterior" required>
+                </div>
+
+                <button type="submit" class="styled-button">Predecir</button>
+            </form>
+
+            <!-- Mostrar la predicción con efectos visuales -->
+            {% if prediction %}
+            <div class="prediction-result">
+                <h2>Predicción del PPACumulado:</h2>
+                <div class="prediction-box">{{ prediction }}</div>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Otras secciones -->
+        <section id="info_random_forest" class="section">
+    <h2>Información sobre el Algoritmo Random Forest</h2>
+    <p>
+        Random Forest es un algoritmo de aprendizaje automático basado en la combinación de múltiples árboles de decisión. 
+        Funciona de la siguiente manera:
+    </p>
+    <ul>
+        <li>Construye varios árboles de decisión durante el entrenamiento.</li>
+        <li>Cada árbol se entrena con una muestra aleatoria del conjunto de datos (método conocido como bootstrap).</li>
+        <li>Al predecir, cada árbol vota por una clase, y la clase final es la que obtiene la mayoría de votos (para clasificación).</li>
+        <li>Para regresión, toma el promedio de las predicciones de todos los árboles.</li>
+    </ul>
+    <p>
+        Random Forest es robusto frente al sobreajuste y puede manejar grandes cantidades de datos y variables, ofreciendo predicciones precisas.
+    </p>
+</section>
+
+        <section id="info_modelo" class="section">
+    <h2>Modelo Utilizado</h2>
+
+    <p>Métricas del modelo Random Forest utilizado:</p>
+    <ul>
+        <li><strong>Error Cuadrático Medio (MSE):</strong> 2.57</li>
+        <li><strong>Raíz del Error Cuadrático Medio (RMSE):</strong> 1.60</li>
+        <li><strong>Coeficiente de Determinación (R² Score):</strong> 0.34</li>
+    </ul>
+
+    <!-- Imagen 1: Comparación de Valores -->
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='comparacion.png') }}" alt="Comparación Valores Reales y Predichos">
+        <p>Este gráfico muestra la comparación entre los valores reales del PPACumulado y las predicciones realizadas por el modelo. La línea roja representa la predicción perfecta, mientras que los puntos azules representan los valores predichos.</p>
+    </div>
+
+    <!-- Imagen 2: Importancia de las Características -->
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='top.png') }}" alt="Importancia de las Características">
+        <p>En este gráfico se muestra la importancia relativa de las características en el modelo. Podemos ver que el Promedio Ponderado Anterior (PPAnterior) es la variable más influyente en la predicción del PPACumulado.</p>
+    </div>
+
+    <!-- Imagen 3: Visualización del Árbol -->
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='arbol.png') }}" alt="Árbol de Decisión">
+        <p>Esta imagen representa uno de los árboles de decisión del modelo Random Forest. Cada nodo muestra la división basada en una característica específica, con el valor promedio en cada paso.</p>
+    </div>
+</section>
+
+    </div>
+</body>
+      <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+        }
+    </script>
+</html>
